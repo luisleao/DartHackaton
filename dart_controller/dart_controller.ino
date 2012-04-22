@@ -1,5 +1,7 @@
 #include <Wire.h>
+#include <Servo.h>
 
+Servo myservo;
 
 
 
@@ -20,6 +22,12 @@
 #define  LED1_BLUE      9
 
 
+#define ON 85
+#define OFF 95
+#define PIN 11
+
+
+
 
 String inputString = "";
 
@@ -27,6 +35,7 @@ String inputString = "";
 int btn1_state = HIGH;
 int btn2_state = HIGH;
 int btn3_state = HIGH;
+
 
 
 
@@ -47,6 +56,10 @@ void setup() {
   digitalWrite(BUTTON3, HIGH);
   
   init_leds();
+  
+  myservo.attach(PIN); 
+  myservo.write(OFF);
+
   
   delay(1000);
 
@@ -93,19 +106,19 @@ void loop() {
   if (digitalRead(BUTTON1) != btn1_state) {
     btn1_state = digitalRead(BUTTON1);
     if (btn1_state == LOW)
-      Serial.print("OA\n");
+      Serial.print("O0\n");
   }
 
   if (digitalRead(BUTTON2) != btn2_state) {
     btn2_state = digitalRead(BUTTON2);
     if (btn2_state == LOW)
-      Serial.print("OB\n");
+      Serial.print("O1\n");
   }
 
   if (digitalRead(BUTTON3) != btn3_state) {
     btn3_state = digitalRead(BUTTON3);
     if (btn3_state == LOW)
-      Serial.print("OC\n");
+      Serial.print("O2\n");
   }
   
 
@@ -113,6 +126,16 @@ void loop() {
 }
 
 
+
+
+void push(int total) {
+  for (int i=0; i<total; i++) {
+    myservo.write(ON);
+    delay(100);
+    myservo.write(OFF);
+    delay(100);
+  }
+}
 
 
 
@@ -124,47 +147,45 @@ void serialEvent() {
     // so the main loop can do something about it:
     if (inChar == '\n' || inChar == '\r') {
       
-      //Serial.println(inputString); 
-      //Serial.print("entrada ");
-      //Serial.println(inputString.substring(0, 1));
-      
       if (inputString.substring(0,1).equals("C")) { //clear leds
         digitalWrite(LED1_RED, HIGH); digitalWrite(LED1_GREEN, HIGH); digitalWrite(LED1_BLUE, HIGH);
         digitalWrite(LED2_RED, HIGH); digitalWrite(LED2_GREEN, HIGH); digitalWrite(LED2_BLUE, HIGH);
         digitalWrite(LED3_RED, HIGH); digitalWrite(LED3_GREEN, HIGH); digitalWrite(LED3_BLUE, HIGH);
         
-      if (inputString.substring(0,1).equals("G")) { //green leds
+      } else if (inputString.substring(0,1).equals("G")) { //green leds
         digitalWrite(LED1_RED, HIGH); digitalWrite(LED1_GREEN, LOW); digitalWrite(LED1_BLUE, HIGH);
         digitalWrite(LED2_RED, HIGH); digitalWrite(LED2_GREEN, LOW); digitalWrite(LED2_BLUE, HIGH);
         digitalWrite(LED3_RED, HIGH); digitalWrite(LED3_GREEN, LOW); digitalWrite(LED3_BLUE, HIGH);
         
-      } else if (inputString.substring(0,1).equals("T")) {
+      } else if (inputString.substring(0,1).equals("T")) { //timeout - red leds
         digitalWrite(LED1_RED, LOW); digitalWrite(LED1_GREEN, HIGH); digitalWrite(LED1_BLUE, HIGH);
         digitalWrite(LED2_RED, LOW); digitalWrite(LED2_GREEN, HIGH); digitalWrite(LED2_BLUE, HIGH);
         digitalWrite(LED3_RED, LOW); digitalWrite(LED3_GREEN, HIGH); digitalWrite(LED3_BLUE, HIGH);
         
-      } else if (inputString.substring(0,1).equals("L")) {
+      } else if (inputString.substring(0,1).equals("L")) { //turn lights on
         String led = inputString.substring(1,2);
         String cor = inputString.substring(2,3);
-        if (led.equals("A")) {
+        if (led.equals("0")) {
           digitalWrite(LED1_RED, cor == "R" ? LOW : HIGH);
           digitalWrite(LED1_GREEN, cor == "G" ? LOW : HIGH);
           digitalWrite(LED1_BLUE, cor == "B" ? LOW : HIGH);
           
-        } else if (led.equals("B")) {
+        } else if (led.equals("1")) {
           digitalWrite(LED2_RED, cor == "R" ? LOW : HIGH);
           digitalWrite(LED2_GREEN, cor == "G" ? LOW : HIGH);
           digitalWrite(LED2_BLUE, cor == "B" ? LOW : HIGH);
           
-        } else if (led.equals("C")) {
+        } else if (led.equals("2")) {
           digitalWrite(LED3_RED, cor == "R" ? LOW : HIGH);
           digitalWrite(LED3_GREEN, cor == "G" ? LOW : HIGH);
           digitalWrite(LED3_BLUE, cor == "B" ? LOW : HIGH);
           
         }
+      } else if (inputString.substring(0,1).equals("S")) { //bell
+        //move the servos X times
+        push(inputString.substring(1).toInt());
+
       }
-      
-      
       
       // clear the string:
       inputString = "";
