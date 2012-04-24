@@ -15,9 +15,9 @@ Demo: http://youtu.be/M5wDBLSGOlE
 
 
 Criamos 4 aplicativos, sendo:
-*firmware arduino e proxy serial em Processing [https://github.com/luisleao/DartHackaton]
-*backend em Dart (server mode) [https://github.com/saitodisse/dartDuino2012]
-*frontend em Dart (web mode) [https://github.com/saitodisse/dartDuinoClient2012]
+* firmware arduino e proxy serial em Processing [https://github.com/luisleao/DartHackaton]
+* backend em Dart (server mode) [https://github.com/saitodisse/dartDuino2012]
+* frontend em Dart (web mode) [https://github.com/saitodisse/dartDuinoClient2012]
 
 
 Funcionamento:
